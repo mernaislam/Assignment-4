@@ -1,4 +1,9 @@
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <climits>
+#include <cctype>
+#include <algorithm>
 
 using namespace std;
 
@@ -18,18 +23,25 @@ void upperCase();
 void lowerCase();
 void firstCaps();
 void save();
-void exit();
 
+string fileName;
+fstream myFile;
+
+//__________________________
 int main(){
-    string fileName;
     cout << "Please enter the name of the file you want to deal with: " << endl;
     cin >> fileName;
-    //test if such a file exists or not. If it does, it will display a message: "This File Already
-    //Exists" and it will open it for read and write. If it does not exist, it will create a file with the given name and will
-    //print a message: "This is a new file. I created it for you "
+    fileName += ".txt";
+    myFile.open(fileName);
+    if (myFile.is_open()) {
+        cout << "This File Already Exists" << endl;
+    } else {
+        cout << "This is a new file. I created it for you! " << endl;
+    }
+    myFile.close();
     startMenu();
 }
-
+//__________________________
 void startMenu(){
     int choice;
     cout << "Choose the option you want from the following: " << endl;
@@ -53,86 +65,196 @@ void startMenu(){
     switch(choice){
         case 1:
             addingContent();
+            break;
         case 2:
             displayContent();
+            break;
         case 3:
             emptyFile();
+            break;
         case 4:
             encryptFile();
+            break;
         case 5:
             decryptFile();
+            break;
         case 6:
             mergeFile();
+            break;
         case 7:
             countWords();
+            break;
         case 8:
             countCharacters();
+            break;
         case 9:
             countLines();
+            break;
         case 10:
             searchWord();
+            break;
         case 11:
             wordNumber();
+            break;
         case 12:
             upperCase();
+            break;
         case 13:
             lowerCase();
+            break;
         case 14:
             firstCaps();
+            break;
         case 15:
             save();
+            break;
         case 16:
-            exit();
+            cout << "Thank you! The program ends here. " << endl;
         default:
             cout << "Invalid number entered, please choose from 1 to 16 only: " << endl;
             startMenu();
     }
 }
+//__________________________
 void addingContent(){
+    string text;
+    cin.ignore(INT_MAX, '\n');
+    cout << "Write the text you want to append in that file: " << endl;
+    getline(cin, text);
+    myFile.open(fileName, ios::app);
+    myFile << text << endl;
 
+    myFile.close();
+    startMenu();
 }
+//__________________________
 void displayContent(){
-
+    startMenu();
 }
+//__________________________
 void emptyFile(){
-
+    startMenu();
 }
+//__________________________
 void encryptFile(){
-
+    startMenu();
 }
+//__________________________
 void decryptFile(){
-
+    startMenu();
 }
+//__________________________
 void mergeFile(){
-
+    fstream myFileMerged;
+    string mergedFile, text;
+    cout << "Please write the name of the file you want to merge with the original: " << endl;
+    cin >> mergedFile;
+    mergedFile += ".txt";
+    while(mergedFile == fileName){
+        cout << "Error: it cannot be the same filename of the original one! Please try again: " << endl;
+        cin >> mergedFile;
+        mergedFile += ".txt";
+    }
+    myFileMerged.open(mergedFile, ios::in);
+    myFile.open(fileName, ios::app);
+    if(myFileMerged.is_open()){
+        while(getline(myFileMerged, text)){
+            myFile << text << endl;
+        }
+    }else{
+        cout << "Invalid File Name, please try again: " << endl;
+        mergeFile();
+    }
+    myFile.close();
+    myFileMerged.close();
+    startMenu();
 }
+//__________________________
 void countWords(){
-
+    string word;
+    int count = 0;
+    myFile.open(fileName, ios::in);
+    while(!myFile.eof()){
+        myFile >> word;
+        count++;
+    }
+    cout << "The number of words in this file is: " << count << endl;
+    myFile.close();
+    startMenu();
 }
+//__________________________
 void countCharacters(){
-
+    string word;
+    int count = 0;
+    myFile.open(fileName, ios::in);
+    while(!myFile.eof()){
+        myFile >> word;
+        for(char letter : word){
+            count++;
+        }
+    count++;
+    }
+    count--;
+    cout << "The number of characters in this file is: " << count << endl;
+    myFile.close();
+    startMenu();
 }
+//__________________________
 void countLines(){
-
+    int count = 0;
+    string text;
+    myFile.open(fileName, ios::in);
+    while(getline(myFile, text)){
+        count++;
+    }
+    cout << "The number of lines in this file is: " << count << endl;
+    myFile.close();
+    startMenu();
 }
-void searchWord(){
-
+//__________________________
+void searchWord() {
+    string word;
+    string searchWord;
+    int count = 0;
+    cout << "Please enter the word you want to search for: " << endl;
+    cin >> searchWord;
+    transform(searchWord.begin(), searchWord.end(), searchWord.begin(), ::tolower);
+    myFile.open(fileName, ios::in);
+    while (!myFile.eof()) {
+        myFile >> word;
+        transform(word.begin(), word.end(), word.begin(), ::tolower);
+        if (word == searchWord) {
+            count++;
+        }
+    }
+    if(count > 0){
+        cout << "Word was found in the file :)" << endl;
+        cout << "It's been found " << count << " times. " << endl;
+    } else {
+        cout << "Word was not found in the file :(" << endl;
+    }
+    myFile.close();
+    startMenu();
 }
-void wordNumber(){
-
+//__________________________
+void wordNumber() {
+    startMenu();
 }
+//__________________________
 void upperCase(){
-
+    startMenu();
 }
+//__________________________
 void lowerCase(){
-
+    startMenu();
 }
+//__________________________
 void firstCaps(){
-
+    startMenu();
 }
+//__________________________
 void save(){
-
+    startMenu();
 }
-void exit(){
-
-}
+//__________________________
+//The program ends here!
