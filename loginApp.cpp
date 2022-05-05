@@ -1,3 +1,117 @@
 #include <iostream>
+#include <string>
 
 using namespace std;
+
+void registration();
+void login();
+void changePassword();
+void verifyPassword();
+
+int main(){
+    int choice;
+    cout << "Welcome! This is a login application, please choose your option: " << endl;
+    cout << " 1. Register \n 2. Login \n 3. Change Password \n 4. Exit" << endl;
+    cin >> choice;
+    while(choice > 4 || choice < 1){
+        cout << "Invalid number entered please choose a number between 1 and 4: " << endl;
+        cin >> choice;
+    }
+    if(choice == 1){
+        registration();
+    } else if(choice == 2){
+        login();
+    } else if(choice == 3){
+        changePassword();
+    } else if(choice == 4){
+        cout << "Thank you for using the application! The program ends here. " << endl;
+    } else {
+        cout << "Invalid number, please try again!" << endl;
+    }
+}
+
+void registration(){
+
+    string email, mobile, name;
+    // 1. add his profile  (with personal information) to the system and select a username and a password
+    cout << "Please enter your email: " << endl;
+    cin >> email;
+    // 2. user's email and email should not be previously registered
+    // 3. Ensure email follows proper email format
+    cout << "Please enter your mobile number: " << endl;
+    cin >> mobile;
+    // 4. Verify mobile format
+    cout << "Please enter your name :" << endl;
+    cin >> name;
+    // 5. Ensure that the name follows proper format
+    // 6. Display a message to the user
+    cout << "Passwords must contain:\n"
+            "\n"
+            "ْ  a minimum of 1 lower case letter [a-z] and\n"
+            "ْ  a minimum of 1 upper case letter [A-Z] and\n"
+            "ْ  a minimum of 1 numeric character [0-9] and\n"
+            "ْ  a minimum of 1 special character: ~`!@#$%^&*()-_+={}[]|\\;:\"<>,./?\n"
+            "ْ  at least 1 upper case, numeric, and special character must be EMBEDDED somewhere in the middle of the password, and not just be the first or the last character of the password string.\n"
+            "ْ  Passwords must be at least 10 characters in length, but can be much longer." << endl;
+
+    cout << "Please enter your password: " << endl;
+    verifyPassword();
+
+    // 9. Cover the password with ***** while the user is entering it.
+    // 10. If registration is valid, the user profile, ID and password are added to the list of system users and stored in the user file
+}
+
+void login(){
+
+}
+
+void changePassword(){
+
+}
+
+void verifyPassword(){
+
+    string password1, password2;
+    int countUpper = 0, countLower = 0, countNum = 0, countSpecial = 0, countLetters = 0;
+
+    cin >> password1;
+
+    // 8. Verify that the password is a strong one.
+    for(char letter : password1){
+        if(int(letter) > 96 && int(letter) < 123){
+            countLower++;
+        } else if(int(letter) > 64 && int(letter) < 91){
+            countUpper++;
+        } else if(int(letter) > 47 && int(letter) < 58){
+            countNum++;
+        } else if(int(letter) > 32){
+            countSpecial++;
+        }
+        countLetters++;
+    }
+    if(countLetters >= 10 && countSpecial >= 1 && countUpper >= 1 && countLower >= 1 && countNum >= 1){
+        cout << "Your password is strong enough! " << endl;
+        cout << "Please enter your password again: " << endl;
+        cin >> password2;
+        while(password1 != password2){
+            cout << "The two passwords are not the same, please re-enter the second password: " << endl;
+            cin >> password2;
+        }
+    } else {
+        cout << "The password is not strong enough. " << endl;
+        if(countLetters < 10){
+            cout << "You need to use more characters in your password." << endl;
+            cout << "You must use at least " << (10-countLetters) << " more characters." << endl;
+        }if(countSpecial == 0){
+            cout << "You must use at least 1 special character from: ~`!@#$%^&*()-_+={}[]|\\;:\"<>,./?" << endl;
+        }  if(countLower == 0){
+            cout << "You must use at least 1 lowercase letter: [a-z] " << endl;
+        } if(countUpper == 0){
+            cout << "You must use at least 1 uppercase letter: [A-Z] " << endl;
+        } if(countNum == 0){
+            cout << "You must use at least 1 number from [0-9] " << endl;
+        }
+       cout << "Please re-enter your password: " << endl;
+       verifyPassword();
+    }
+}
