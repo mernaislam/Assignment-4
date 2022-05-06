@@ -1,5 +1,7 @@
 #include <iostream>
+#include <fstream>
 #include <string>
+#include <conio.h>
 
 using namespace std;
 
@@ -7,6 +9,11 @@ void registration();
 void login();
 void changePassword();
 void verifyPassword();
+void verifyName();
+void verifyMobile();
+void verifyEmail();
+
+fstream myFile;
 
 int main(){
     int choice;
@@ -36,14 +43,29 @@ void registration(){
     // 1. add his profile  (with personal information) to the system and select a username and a password
     cout << "Please enter your email: " << endl;
     cin >> email;
+    verifyEmail();
     // 2. user's email and email should not be previously registered
     // 3. Ensure email follows proper email format
+    myFile.open("Database.txt", ios::app);
+    myFile << email << endl;
+    myFile.close();
+
+
     cout << "Please enter your mobile number: " << endl;
     cin >> mobile;
+    verifyMobile();
     // 4. Verify mobile format
+    myFile.open("Database.txt", ios::app);
+    myFile << mobile << endl;
+    myFile.close();
     cout << "Please enter your name :" << endl;
-    cin >> name;
+    cin.ignore();
+    getline(cin, name);
+    verifyName();
     // 5. Ensure that the name follows proper format
+    myFile.open("Database.txt", ios::app);
+    myFile << name << endl;
+    myFile.close();
     // 6. Display a message to the user
     cout << "Passwords must contain:\n"
             "\n"
@@ -55,10 +77,8 @@ void registration(){
             "ْ  Passwords must be at least 10 characters in length, but can be much longer." << endl;
 
     cout << "Please enter your password: " << endl;
-    verifyPassword();
 
-    // 9. Cover the password with ***** while the user is entering it.
-    // 10. If registration is valid, the user profile, ID and password are added to the list of system users and stored in the user file
+    verifyPassword();
 }
 
 void login(){
@@ -73,9 +93,15 @@ void verifyPassword(){
 
     string password1, password2;
     int countUpper = 0, countLower = 0, countNum = 0, countSpecial = 0, countLetters = 0;
-
-    cin >> password1;
-
+    int masking1, masking2;
+    // 9. Cover the password with ***** while the user is entering it.
+    masking1 = _getch();
+    while(masking1 != 13){
+        password1.push_back(masking1);
+        cout << '*';
+        masking1 = _getch();
+    }
+    cout << endl;
     // 8. Verify that the password is a strong one.
     for(char letter : password1){
         if(int(letter) > 96 && int(letter) < 123){
@@ -91,27 +117,57 @@ void verifyPassword(){
     }
     if(countLetters >= 10 && countSpecial >= 1 && countUpper >= 1 && countLower >= 1 && countNum >= 1){
         cout << "Your password is strong enough! " << endl;
+        // 10. If registration is valid, the user profile, ID and password are added to the list of system users and stored in the user file
+        myFile.open("Database.txt", ios::app);
+        myFile << password1 << endl << endl;
+        myFile.close();
         cout << "Please enter your password again: " << endl;
-        cin >> password2;
-        while(password1 != password2){
+        masking2 = _getch();
+        while(masking2 != 13){
+            password2.push_back(masking2);
+            cout << '*';
+            masking2 = _getch();
+        }
+        cout << endl;
+        // 7- Ask the user to repeat the password and make sure it was entered the same twice.
+        while(password1 != password2) {
             cout << "The two passwords are not the same, please re-enter the second password: " << endl;
             cin >> password2;
+            if (password1 == password2) {
+                cout << "Thank you, you have completed your registration: " << endl;
+                break;
+            }
         }
     } else {
-        cout << "The password is not strong enough. " << endl;
-        if(countLetters < 10){
-            cout << "You need to use more characters in your password." << endl;
-            cout << "You must use at least " << (10-countLetters) << " more characters." << endl;
-        }if(countSpecial == 0){
-            cout << "You must use at least 1 special character from: ~`!@#$%^&*()-_+={}[]|\\;:\"<>,./?" << endl;
-        }  if(countLower == 0){
-            cout << "You must use at least 1 lowercase letter: [a-z] " << endl;
-        } if(countUpper == 0){
-            cout << "You must use at least 1 uppercase letter: [A-Z] " << endl;
-        } if(countNum == 0){
-            cout << "You must use at least 1 number from [0-9] " << endl;
+        while(countLetters < 10 || countSpecial == 0 || countUpper == 0 || countLower == 0 || countNum == 0) {
+            cout << "The password is not strong enough. " << endl;
+            if(countLetters < 10){
+                cout << "You need to use more characters in your password." << endl;
+                cout << "You must use at least " << (10-countLetters) << " more characters." << endl;
+            }if(countSpecial == 0){
+                cout << "You must use at least 1 special character from: ~`!@#$%^&*()-_+={}[]|\\;:\"<>,./?" << endl;
+            }  if(countLower == 0){
+                cout << "You must use at least 1 lowercase letter: [a-z] " << endl;
+            } if(countUpper == 0){
+                cout << "You must use at least 1 uppercase letter: [A-Z] " << endl;
+            } if(countNum == 0){
+                cout << "You must use at least 1 number from [0-9] " << endl;
+            }
+            cout << "Please re-enter your password: " << endl;
+            verifyPassword();
+            break;
         }
-       cout << "Please re-enter your password: " << endl;
-       verifyPassword();
     }
+}
+
+void verifyName(){
+
+}
+
+void verifyMobile(){
+
+}
+
+void verifyEmail(){
+
 }
