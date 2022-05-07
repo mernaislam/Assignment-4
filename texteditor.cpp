@@ -4,6 +4,7 @@
 #include <climits>
 #include <cctype>
 #include <algorithm>
+#include <sstream>
 
 using namespace std;
 
@@ -18,15 +19,16 @@ void countWords();
 void countCharacters();
 void countLines();
 void searchWord();
-void wordNumber();
-void upperCase();
-void lowerCase();
+void wordRepeatNumber(string);
+void capitalizeFile();
+void decapitalizeFile();
 void firstCaps();
 void save();
 
 string fileName;
 fstream myFile;
-
+ifstream inFile;
+char name[81];
 //__________________________
 int main(){
     cout << "Please enter the name of the file you want to deal with: " << endl;
@@ -94,13 +96,13 @@ void startMenu(){
             searchWord();
             break;
         case 11:
-            wordNumber();
+            wordRepeatNumber(name);
             break;
         case 12:
-            upperCase();
+            capitalizeFile();
             break;
         case 13:
-            lowerCase();
+            decapitalizeFile();
             break;
         case 14:
             firstCaps();
@@ -192,7 +194,7 @@ void countCharacters(){
         for(char letter : word){
             count++;
         }
-    count++;
+        count++;
     }
     count--;
     cout << "The number of characters in this file is: " << count << endl;
@@ -237,19 +239,81 @@ void searchWord() {
     startMenu();
 }
 //__________________________
-void wordNumber() {
+void wordRepeatNumber(string name) {
+    string word;
+    string temp;
+    int count = 0;
+    ifstream inFile(name);
+    cout << "Enter the word to get number of existence: ";
+    cin >> word;
+    while (inFile >> temp){
+        if (temp == word)
+            ++count;
+    }
+    cout<< count << endl;
+    myFile.close();
     startMenu();
 }
 //__________________________
-void upperCase(){
+void capitalizeFile(){
+    stringstream str_stream;
+    string str;
+    int i=0, temp=0;
+    myFile.open(name);
+    str_stream<<myFile.rdbuf();
+    myFile.close();
+    str = str_stream.str();
+    while(str[i]){
+        str[i] = toupper(str[i]);
+        i++;
+    }
+    myFile.open(name);
+    myFile<<str;
+    myFile.close();
     startMenu();
 }
 //__________________________
-void lowerCase(){
+void decapitalizeFile(){
+    stringstream str_stream;
+    string str;
+    int i=0;
+    myFile.open(name);
+    str_stream<<myFile.rdbuf();
+    myFile.close();
+    str = str_stream.str();
+    while(str[i]){
+        str[i] = tolower(str[i]);
+        i++;
+    }
+    myFile.open(name);
+    myFile<<str;
+    myFile.close();
     startMenu();
 }
 //__________________________
 void firstCaps(){
+    stringstream str_stream;
+    string str;
+    int i=0, temp=0;
+
+    myFile.open(name);
+    str_stream<<myFile.rdbuf();
+    myFile.close();
+    str = str_stream.str();
+    while(str[i])
+    {
+        if(temp==0)
+        {
+            str[i] = toupper(str[i]);
+            temp = 1;
+        }
+        else if(isspace(str[i]))
+            temp = 0;
+        i++;
+    }
+    myFile.open(name);
+    myFile<<str;
+    myFile.close();
     startMenu();
 }
 //__________________________
