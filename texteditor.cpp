@@ -19,7 +19,7 @@ void countWords();
 void countCharacters();
 void countLines();
 void searchWord();
-void wordRepeatNumber(string);
+void wordRepeatNumber();
 void capitalizeFile();
 void decapitalizeFile();
 void firstCaps();
@@ -28,7 +28,7 @@ void save();
 string fileName;
 fstream myFile;
 ifstream inFile;
-char name[81];
+
 //__________________________
 int main(){
     cout << "Please enter the name of the file you want to deal with: " << endl;
@@ -96,7 +96,7 @@ void startMenu(){
             searchWord();
             break;
         case 11:
-            wordRepeatNumber(name);
+            wordRepeatNumber();
             break;
         case 12:
             capitalizeFile();
@@ -239,27 +239,29 @@ void searchWord() {
     startMenu();
 }
 //__________________________
-void wordRepeatNumber(string name) {
+void wordRepeatNumber() {
     string word;
     string temp;
     int count = 0;
-    ifstream inFile(name);
+    ifstream inFile(fileName);
     cout << "Enter the word to get number of existence: ";
     cin >> word;
+    transform(word.begin(), word.end(), word.begin(), ::tolower);
     while (inFile >> temp){
+        transform(temp.begin(), temp.end(), temp.begin(), ::tolower);
         if (temp == word)
             ++count;
     }
-    cout<< count << endl;
-    myFile.close();
+    cout << "The repeated number of this word is: " << count << endl;
+    inFile.close();
     startMenu();
 }
 //__________________________
 void capitalizeFile(){
     stringstream str_stream;
     string str;
-    int i=0, temp=0;
-    myFile.open(name);
+    int i=0;
+    myFile.open(fileName);
     str_stream<<myFile.rdbuf();
     myFile.close();
     str = str_stream.str();
@@ -267,7 +269,7 @@ void capitalizeFile(){
         str[i] = toupper(str[i]);
         i++;
     }
-    myFile.open(name);
+    myFile.open(fileName);
     myFile<<str;
     myFile.close();
     startMenu();
@@ -277,7 +279,7 @@ void decapitalizeFile(){
     stringstream str_stream;
     string str;
     int i=0;
-    myFile.open(name);
+    myFile.open(fileName);
     str_stream<<myFile.rdbuf();
     myFile.close();
     str = str_stream.str();
@@ -285,7 +287,7 @@ void decapitalizeFile(){
         str[i] = tolower(str[i]);
         i++;
     }
-    myFile.open(name);
+    myFile.open(fileName);
     myFile<<str;
     myFile.close();
     startMenu();
@@ -296,7 +298,7 @@ void firstCaps(){
     string str;
     int i=0, temp=0;
 
-    myFile.open(name);
+    myFile.open(fileName);
     str_stream<<myFile.rdbuf();
     myFile.close();
     str = str_stream.str();
@@ -311,7 +313,7 @@ void firstCaps(){
             temp = 0;
         i++;
     }
-    myFile.open(name);
+    myFile.open(fileName);
     myFile<<str;
     myFile.close();
     startMenu();
