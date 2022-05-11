@@ -131,18 +131,60 @@ void addingContent(){
 }
 //__________________________
 void displayContent(){
-    startMenu();
-}
+        string line;
+        myFile.open(fileName, ios::in); //modes: in -- read // out -- write // app -- append // trunc -- clear
+        while(getline(myFile, line)){
+            cout << line << endl;
+        }
+        myFile.close();
+        startMenu();
+    }
 //__________________________
 void emptyFile(){
+    myFile.open(fileName, ios:: out | ios::trunc);
+    myFile.close();
     startMenu();
 }
 //__________________________
 void encryptFile(){
+    string line;
+    int temp;
+    inFile.open(fileName, ios::in);
+    myFile.open(fileName);
+
+    while(!inFile.eof()){
+        getline(inFile, line);
+        for(char letter : line){
+            temp = int(letter) + 1;
+            letter = char(temp);
+            myFile << letter;
+        }
+        myFile << endl;
+    }
+
+    inFile.close();
+    myFile.close();
     startMenu();
 }
 //__________________________
 void decryptFile(){
+    string line;
+    int temp;
+    inFile.open(fileName, ios::in);
+    myFile.open(fileName);
+
+    while(!inFile.eof()){
+        getline(inFile, line);
+        for(char letter : line){
+            temp = int(letter) - 1;
+            letter = char(temp);
+            myFile << letter;
+        }
+        myFile << endl;
+    }
+
+    inFile.close();
+    myFile.close();
     startMenu();
 }
 //__________________________
@@ -323,4 +365,5 @@ void save(){
     startMenu();
 }
 //__________________________
+
 //The program ends here!
