@@ -1,0 +1,4 @@
+/Users/mariaehab/Desktop/Assignment-4/cmake-build-debug/CMakeFiles/Assignment_4.dir
+/Users/mariaehab/Desktop/Assignment-4/cmake-build-debug/CMakeFiles/loginapp.dir
+/Users/mariaehab/Desktop/Assignment-4/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/mariaehab/Desktop/Assignment-4/cmake-build-debug/CMakeFiles/rebuild_cache.dir
