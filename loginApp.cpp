@@ -161,6 +161,24 @@ void verifyPassword(){
 }
 
 void verifyName(){
+    string name;
+    cout << "Please enter your name :" << endl;
+    cin >> name;
+    string namePattern = "^[a-zA-Z_]+$";
+    regex nameRule(namePattern);
+    bool isValid = regex_search(name, nameRule);
+
+    if(!isValid){
+        cout << "Invalid name, please enter letters or _ only: " << endl;
+        verifyName();
+    } else {
+        myFile.open("Database.txt", ios::app);
+        myFile << name << endl;
+        myFile.close();
+        userDetails.push_back(name);
+    }
+}
+
 
 void verifyMobile(){
     string mobile;
