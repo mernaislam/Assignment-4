@@ -5,6 +5,8 @@
 #include <cctype>
 #include <algorithm>
 #include <sstream>
+#include <cstdio>
+#include <cstring>
 
 using namespace std;
 
@@ -23,7 +25,7 @@ void wordRepeatNumber();
 void capitalizeFile();
 void decapitalizeFile();
 void firstCaps();
-void save();
+void save(string);
 
 string fileName;
 fstream myFile;
@@ -108,7 +110,7 @@ void startMenu(){
             firstCaps();
             break;
         case 15:
-            save();
+            save(fileName);
             break;
         case 16:
             cout << "Thank you! The program ends here. " << endl;
@@ -361,8 +363,31 @@ void firstCaps(){
     startMenu();
 }
 //__________________________
-void save(){
-    startMenu();
+void save(string oldNameString) {
+    int choice;
+    char newName[] = " ";
+
+    int nameLength = oldNameString.length();
+    char oldNameChar[nameLength + 1];
+    strcpy(oldNameChar, fileName.c_str());
+
+    cout << "would you like to rename your file?\n 1) rename\n 2)same name" << endl;
+    cin >> choice;
+    if (choice == 2) {
+        myFile.close();
+
+    }
+
+    if (choice == 1) {
+        cout << "please enter the new name" << endl;
+        cin >> newName;
+        if (rename(oldNameChar, newName) != 0)
+            perror("Error renaming file");
+        else
+            cout << "File renamed successfully";
+
+    }
+
 }
 //__________________________
 
