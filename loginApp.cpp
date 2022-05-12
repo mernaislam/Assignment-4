@@ -15,6 +15,7 @@ void verifyPassword();
 void verifyName();
 void verifyMobile();
 void verifyEmail();
+void read();
 
 fstream myFile;
 string userEmail;
@@ -36,8 +37,10 @@ int main(){
         login();
     } else if(choice == 3){
         changePassword();
-    } else if(choice == 4){
+    } else if (choice == 4) {
         cout << "Thank you for using the application! The program ends here. " << endl;
+    } else if (choice == 5) {
+        read();
     } else {
         cout << "Invalid number, please try again!" << endl;
     }
@@ -86,8 +89,69 @@ void registration(){
     main();
 }
 
-void login(){
+void read() {
+    ifstream myFile2("Database.txt");
 
+    main();
+}
+
+void login() {
+    int countPass = 0, countId = 0;
+    string userPassword, userId;
+    string line;
+    string idsArr[30], passwordsArr[30];
+    cout << "please enter ID and password" << endl;
+    cout << "ID:";
+    cin >> userId;
+    cout << "password:";
+    cin >> userPassword;
+
+    ifstream input("Database.txt");
+
+    //for loop to read all lines in the file
+    for (int lineNo = 1; getline(input, line); lineNo++) {
+
+        //ID always in line 6 and incremented 6 lines to each user
+        if (lineNo % 6 == 0) {
+            idsArr[countId] = line;
+            countId++; //counter for id array
+        }
+
+        //Password always in line 5 and incremented 6 lines to each user
+        if (lineNo % 6 == 5) {
+            passwordsArr[countPass] = line;
+            countPass++; //counter for password array
+        }
+    }
+
+    for (int i = 0; i < countPass; i++) {
+        if (userPassword == passwordsArr[i] && userId == idsArr[i]) {
+            cout << "Welcome to the system" << endl;
+            main();
+            break;
+        }
+    }
+
+    cout << "invalid id or password" << endl;
+    main();
+
+
+//    while (input >> ID2 >> password2){
+//        if (ID1 == ID2 and password1 == password2){
+//            count = 1;
+//            system("cls");
+//        }
+//    }
+//
+//    input.close();
+//    if (count == 1){
+//        cout << ID2 <<"\n your login was sucessful";
+//        main();
+//    }
+//    else{
+//        cout << "failed to login, please check your ID. ";
+//        main();
+//    }
 }
 
 void changePassword(){
