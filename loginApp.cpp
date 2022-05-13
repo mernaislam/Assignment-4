@@ -97,15 +97,27 @@ void read() {
 }
 
 void login() {
-    int countPass = 0, countId = 0;
-    string userPassword, userId;
+    int countPass = 0, countId = 0, temp, masking;
+    static int countAccess = 1;
+    string userPassword, userId, passDecrypted;
     string line;
     string idsArr[30], passwordsArr[30];
     cout << "please enter ID and password" << endl;
     cout << "ID:";
     cin >> userId;
     cout << "password:";
-    cin >> userPassword;
+    masking = _getch();
+    while(masking != 13){
+        userPassword.push_back(masking);
+        cout << '*';
+        masking = _getch();
+    }
+    cout << endl;
+    for(char letter : userPassword){
+        temp = int(letter);
+        temp++;
+        passDecrypted += char(temp);
+    }
 
     ifstream input("Database.txt");
 
@@ -126,15 +138,21 @@ void login() {
     }
 
     for (int i = 0; i < countPass; i++) {
-        if (userPassword == passwordsArr[i] && userId == idsArr[i]) {
-            cout << "Welcome to the system" << endl;
+        if (passDecrypted == passwordsArr[i] && userId == idsArr[i]) {
+            cout << "Welcome to the System!" << endl;
             main();
             break;
         }
     }
 
-    cout << "invalid id or password" << endl;
-    main();
+    countAccess++;
+    if(countAccess > 3){
+        cout << "You have exceeded your available three trials. So you are denied from accessing the system: " << endl;
+        main();
+    } else {
+        cout << "invalid ID or Password. Try Again: " << endl;
+        login();
+    }
 
 
 //    while (input >> ID2 >> password2){
@@ -160,9 +178,8 @@ void changePassword(){
     int countPass = 0;
     string line;
     string passwordsArr[30];
-
-   // login();
-   // changePassword();
+    cout << "You must login first: " << endl;
+    login();
     cout << "please enter your old password :" << endl;
     cin >> oldPass;
     cout << "please enter your new password :" << endl;
@@ -192,8 +209,8 @@ void changePassword(){
 
 void verifyPassword(){
 
-    string password1, password2;
-    int masking1, masking2;
+    string password1, password2, passEncrypted = "";
+    int masking1, masking2, temp;
     cout << "Please enter your password: " << endl;
     // 9. Cover the password with ***** while the user is entering it.
     masking1 = _getch();
@@ -215,9 +232,13 @@ void verifyPassword(){
     bool isValid = regex_search(password1, regexRule2);
     if(isValid){
         cout << "Password is valid" << endl;
-        // 10. If registration is valid, the user profile, ID and password are added to the list of system users and stored in the user file
+        for(char letter : password1){
+            temp = int(letter);
+            temp++;
+            passEncrypted += char(temp);
+        }
         myFile.open("Database.txt", ios::app);
-        myFile << password1 << endl;
+        myFile << passEncrypted << endl;
         myFile.close();
         cout << "Please enter your password again: " << endl;
         masking2 = _getch();
