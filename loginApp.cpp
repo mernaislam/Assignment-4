@@ -16,6 +16,7 @@ void verifyName();
 void verifyMobile();
 void verifyEmail();
 void read();
+bool change(false); 
 
 fstream myFile;
 string userEmail;
@@ -155,7 +156,38 @@ void login() {
 }
 
 void changePassword(){
+   string oldPass, newPass;
+    int countPass = 0;
+    string line;
+    string passwordsArr[30];
 
+   // login();
+   // changePassword();
+    cout << "please enter your old password :" << endl;
+    cin >> oldPass;
+    cout << "please enter your new password :" << endl;
+    cin >> newPass;
+
+    verifyPassword();
+    ifstream input("Database.txt");
+    for (int lineNo = 1; getline(input, line); lineNo++) {
+
+        //Password always in line 5 and incremented 6 lines to each user
+        if (lineNo % 6 == 5) {
+            passwordsArr[countPass] = line;
+            countPass++; //counter for password array
+        }
+    }
+    for (int i = 0; i < countPass; i++) {
+        if (oldPass == passwordsArr[i]) {
+            oldPass = newPass;
+            cout << "password changed sucessfully" << endl;
+            main();
+            break;
+        }
+    }
+    cout << "invalid password" << endl;
+    main();
 }
 
 void verifyPassword(){
