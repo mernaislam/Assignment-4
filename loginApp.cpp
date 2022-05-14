@@ -9,52 +9,65 @@
 using namespace std;
 
 void registration();
+
 void login();
+
 void changePassword();
+
 void verifyPassword();
+
 void verifyName();
+
 void verifyMobile();
+
 void verifyEmail();
-void read();
-bool change(false); 
 
 fstream myFile;
 string userEmail;
 unordered_map<string, list<string>> userProfile; // store email as key and list of details as value
-list<string> userDetails {}; // store list of details {mobile , name , password}
+list<string> userDetails{}; // store list of details {mobile , name , password}
+struct userData {
+    int startIndex;
+    string name;
+    string email;
+    string password;
+    string phone;
+    string id;
+};
 
-int main(){
+userData activeUser;
+const int MAX_USERS = 30;
+
+int main() {
     int choice;
     cout << "Welcome! This is a login application, please choose your option: " << endl;
     cout << " 1. Register \n 2. Login \n 3. Change Password \n 4. Exit" << endl;
     cin >> choice;
-    while(choice > 4 || choice < 1){
+    while (choice > 5 || choice < 1) {
         cout << "Invalid number entered please choose a number between 1 and 4: " << endl;
         cin >> choice;
     }
-    if(choice == 1){
+    if (choice == 1) {
         registration();
-    } else if(choice == 2){
+    } else if (choice == 2) {
         login();
-    } else if(choice == 3){
+    } else if (choice == 3) {
         changePassword();
     } else if (choice == 4) {
         cout << "Thank you for using the application! The program ends here. " << endl;
-    } else if (choice == 5) {
-        read();
     } else {
         cout << "Invalid number, please try again!" << endl;
     }
 }
 
-void registration(){
+void registration() {
 
     string line;
     int ID = 20220000;
     myFile.open("Database.txt", ios::in);
-    while(!myFile.eof()) {
+    while (!myFile.eof()) {
         myFile >> line;
-        if(line.substr(line.length()-4, line.length()) == ".com"){
+        if (line.substr(line.length() - 4, line.length()) == ".com") {
             userProfile.insert(pair<string, list<string>>(line, userDetails));
             ID++;
         }
@@ -90,30 +103,24 @@ void registration(){
     main();
 }
 
-void read() {
-    ifstream myFile2("Database.txt");
-
-    main();
-}
-
 void login() {
-    int countPass = 0, countId = 0, temp, masking;
-    static int countAccess = 1;
+    int count = 0, temp, masking;
     string userPassword, userId, passDecrypted;
     string line;
-    string idsArr[30], passwordsArr[30];
+    userData userData[MAX_USERS];
+
     cout << "please enter ID and password" << endl;
     cout << "ID:";
     cin >> userId;
     cout << "password:";
     masking = _getch();
-    while(masking != 13){
+    while (masking != 13) {
         userPassword.push_back(masking);
         cout << '*';
         masking = _getch();
     }
     cout << endl;
-    for(char letter : userPassword){
+    for (char letter: userPassword) {
         temp = int(letter);
         temp++;
         passDecrypted += char(temp);
@@ -124,60 +131,43 @@ void login() {
     //for loop to read all lines in the file
     for (int lineNo = 1; getline(input, line); lineNo++) {
 
-        //ID always in line 6 and incremented 6 lines to each user
-        if (lineNo % 6 == 0) {
-            idsArr[countId] = line;
-            countId++; //counter for id array
-        }
-
         //Password always in line 5 and incremented 6 lines to each user
-        if (lineNo % 6 == 5) {
-            passwordsArr[countPass] = line;
-            countPass++; //counter for password array
+        if (lineNo % 6 == 2) {
+            userData[count].startIndex = lineNo;
+            userData[count].email = line;
+        } else if (lineNo % 6 == 3) {
+            userData[count].phone = line;
+        } else if (lineNo % 6 == 4) {
+            userData[count].name = line;
+        } else if (lineNo % 6 == 5) {
+            userData[count].password = line;
+        } else if (lineNo % 6 == 0) {
+            userData[count].id = line;
+            count++;
         }
     }
 
-    for (int i = 0; i < countPass; i++) {
-        if (passDecrypted == passwordsArr[i] && userId == idsArr[i]) {
+    for (int i = 0; i < count; i++) {
+        if (userPassword == userData[i].password && userId == userData[i].id) {
+            activeUser.startIndex = userData[i].startIndex ;
+            activeUser.id = userData[i].id ;
+            activeUser.name = userData[i].name ;
+            activeUser.email = userData[i].email ;
+            activeUser.password = userData[i].password ;
+            activeUser.phone= userData[i].phone;
             cout << "Welcome to the System!" << endl;
-            main();
+            //main();
             break;
         }
     }
-
-    countAccess++;
-    if(countAccess > 3){
-        cout << "You have exceeded your available three trials. So you are denied from accessing the system: " << endl;
-        main();
-    } else {
-        cout << "invalid ID or Password. Try Again: " << endl;
-        login();
-    }
-
-
-//    while (input >> ID2 >> password2){
-//        if (ID1 == ID2 and password1 == password2){
-//            count = 1;
-//            system("cls");
-//        }
-//    }
-//
-//    input.close();
-//    if (count == 1){
-//        cout << ID2 <<"\n your login was sucessful";
-//        main();
-//    }
-//    else{
-//        cout << "failed to login, please check your ID. ";
-//        main();
-//    }
 }
 
-void changePassword(){
-   string oldPass, newPass;
-    int countPass = 0;
+void changePassword() {
+
+    userData userData;
+
+    string oldPass, newPass;
     string line;
-    string passwordsArr[30];
     cout << "You must login first: " << endl;
     login();
     cout << "please enter your old password :" << endl;
@@ -185,36 +175,51 @@ void changePassword(){
     cout << "please enter your new password :" << endl;
     cin >> newPass;
 
-    verifyPassword();
-    ifstream input("Database.txt");
-    for (int lineNo = 1; getline(input, line); lineNo++) {
+    //verifyPassword();
+    const char *file_name = "Database.txt";
+    ifstream originalFile(file_name);
 
-        //Password always in line 5 and incremented 6 lines to each user
-        if (lineNo % 6 == 5) {
-            passwordsArr[countPass] = line;
-            countPass++; //counter for password array
-        }
+    ofstream tempFile;
+    tempFile.open("temp.txt", ofstream::out);
+
+    char c;
+    int line_no = 1;
+    while (originalFile.get(c)) {
+        // file content not to be deleted
+        if (line_no < activeUser.startIndex || line_no > activeUser.startIndex + 5)
+            tempFile << c;
+
+        // if a newline character skip this line
+        if (c == '\n')
+            line_no++;
     }
-    for (int i = 0; i < countPass; i++) {
-        if (oldPass == passwordsArr[i]) {
-            oldPass = newPass;
-            cout << "password changed sucessfully" << endl;
-            main();
-            break;
-        }
-    }
-    cout << "invalid password" << endl;
+
+    tempFile << '\n';
+    tempFile << activeUser.email<<endl;
+    tempFile << activeUser.phone<<endl;
+    tempFile << activeUser.name<<endl;
+    activeUser.password = newPass;
+    tempFile << activeUser.password<<endl;
+    tempFile << activeUser.id<<endl;
+
+    tempFile.close();
+    originalFile.close();
+
+    remove(file_name);
+    rename("temp.txt", file_name);
+
     main();
 }
 
-void verifyPassword(){
+
+void verifyPassword() {
 
     string password1, password2, passEncrypted = "";
     int masking1, masking2, temp;
     cout << "Please enter your password: " << endl;
     // 9. Cover the password with ***** while the user is entering it.
     masking1 = _getch();
-    while(masking1 != 13){
+    while (masking1 != 13) {
         password1.push_back(masking1);
         cout << '*';
         masking1 = _getch();
@@ -230,9 +235,9 @@ void verifyPassword(){
     regex regexRule2(fullPattern2);
 
     bool isValid = regex_search(password1, regexRule2);
-    if(isValid){
+    if (isValid) {
         cout << "Password is valid" << endl;
-        for(char letter : password1){
+        for (char letter: password1) {
             temp = int(letter);
             temp++;
             passEncrypted += char(temp);
@@ -242,14 +247,14 @@ void verifyPassword(){
         myFile.close();
         cout << "Please enter your password again: " << endl;
         masking2 = _getch();
-        while(masking2 != 13){
+        while (masking2 != 13) {
             password2.push_back(masking2);
             cout << '*';
             masking2 = _getch();
         }
         cout << endl;
         // 7- Ask the user to repeat the password and make sure it was entered the same twice.
-        while(password1 != password2) {
+        while (password1 != password2) {
             cout << "The two passwords are not the same, please re-enter the second password: " << endl;
             cin >> password2;
             if (password1 == password2) {
@@ -263,7 +268,7 @@ void verifyPassword(){
     }
 }
 
-void verifyName(){
+void verifyName() {
     string name;
     cout << "Please enter your name :" << endl;
     cin >> name;
@@ -271,7 +276,7 @@ void verifyName(){
     regex nameRule(namePattern);
     bool isValid = regex_search(name, nameRule);
 
-    if(!isValid){
+    if (!isValid) {
         cout << "Invalid name, please enter letters or _ only: " << endl;
         verifyName();
     } else {
@@ -282,8 +287,7 @@ void verifyName(){
     }
 }
 
-
-void verifyMobile(){
+void verifyMobile() {
     string mobile;
     cout << "Please enter your mobile number: " << endl;
     cin >> mobile;
@@ -291,7 +295,7 @@ void verifyMobile(){
     string regexPattern = "01[0-9]*";
     regex regexRule(regexPattern);
     bool isValid = regex_match(mobile, regexRule);
-    if(mobile.length() != 11 || !isValid){
+    if (mobile.length() != 11 || !isValid) {
         cout << "Invalid mobile number, it must be 11 digits starts with 01: " << endl;
         verifyMobile();
     } else {
@@ -303,20 +307,20 @@ void verifyMobile(){
 
 }
 
-void verifyEmail(){
+void verifyEmail() {
     string email;
     string regexPattern = "\\w+\\.?\\w+@\\w+\\.com";
     regex regexRule(regexPattern);
     cout << "Please enter your email: " << endl;
     cin >> email;
     bool isValid = regex_match(email, regexRule);
-    if(!isValid){
+    if (!isValid) {
         cout << "Invalid email address format: [ohndoe@company.com] \nPlease try again! " << endl;
         verifyEmail();
     } else {
         userEmail = email;
-        for(auto word : userProfile){
-            if(email == word.first){
+        for (auto word: userProfile) {
+            if (email == word.first) {
                 cout << "This email has been registered before, please choose another one: " << endl;
                 verifyEmail();
                 break;
