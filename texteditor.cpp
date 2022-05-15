@@ -1,3 +1,12 @@
+// FCAI – Programming 1 – 2022 - Assignment 4
+// Program Name: LoginApp.cpp
+// Last Modification Date: 15/05/2022
+// Author1 and ID and Group: Merna Islam 20210500
+// Author2 and ID and Group: Maria Ehab  20210312
+// Author3 and ID and Group: Jana  Wael  20211026
+// Teaching Assistant: Eng/ Afaf
+// Purpose: To practice mapping into files, using struct, and regex library to form this app.
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -33,9 +42,13 @@ ifstream inFile;
 
 //__________________________
 int main(){
+    // The program starts by taking the name of the file from the user
     cout << "Please enter the name of the file you want to deal with: " << endl;
     cin >> fileName;
+    // then adding .txt at the end of the name
     fileName += ".txt";
+
+    // If the file doesn't exist then the program creates a new one
     myFile.open(fileName);
     if (myFile.is_open()) {
         cout << "This File Already Exists" << endl;
@@ -47,6 +60,8 @@ int main(){
 }
 //__________________________
 void startMenu(){
+
+    // Displaying the start menu for the user to choose from
     int choice;
     cout << "Choose the option you want from the following: " << endl;
     cout << "1. Add new text to the end of the file\n"
@@ -66,6 +81,8 @@ void startMenu(){
             "15. Save\n"
             "16. Exit" << endl;
     cin >> choice;
+
+    // Based on the user's choice, a corresponding function is called
     switch(choice){
         case 1:
             addingContent();
@@ -118,23 +135,27 @@ void startMenu(){
             cout << "Invalid number entered, please choose from 1 to 16 only: " << endl;
             startMenu();
     }
+    // for each function is main menu is re-called to allow the user to choose various options until he exits
 }
 //__________________________
 void addingContent(){
     string text;
     cin.ignore(INT_MAX, '\n');
     cout << "Write the text you want to append in that file: " << endl;
+    // Get the line from the user he wants to append
     getline(cin, text);
+    // open the file in the append mode
     myFile.open(fileName, ios::app);
     myFile << text << endl;
-
     myFile.close();
     startMenu();
 }
 //__________________________
 void displayContent(){
         string line;
-        myFile.open(fileName, ios::in); //modes: in -- read // out -- write // app -- append // trunc -- clear
+        // open the file in the read mode
+        myFile.open(fileName, ios::in);
+        // creating a loop that runs as long as there is a line to read, then display that line in the terminal
         while(getline(myFile, line)){
             cout << line << endl;
         }
@@ -143,6 +164,7 @@ void displayContent(){
     }
 //__________________________
 void emptyFile(){
+    // open the file in the truncate mode that clear all the content in the file
     myFile.open(fileName, ios:: out | ios::trunc);
     myFile.close();
     startMenu();
@@ -151,16 +173,23 @@ void emptyFile(){
 void encryptFile(){
     string line;
     int temp;
+    // open the file in the read mode once and in the write mode once
     inFile.open(fileName, ios::in);
     myFile.open(fileName);
 
+    // while not end of the file
     while(!inFile.eof()){
+        // it reads a line from the reading file
         getline(inFile, line);
+        // run over each character in that line
         for(char letter : line){
+            // then incrementing the character by using the ascii value
             temp = int(letter) + 1;
             letter = char(temp);
+            // write that letter in the writing file
             myFile << letter;
         }
+        // At the end of each line a new line is added in the writing file
         myFile << endl;
     }
 
@@ -172,16 +201,23 @@ void encryptFile(){
 void decryptFile(){
     string line;
     int temp;
+    // open the file in the read mode once and in the write mode once
     inFile.open(fileName, ios::in);
     myFile.open(fileName);
 
+    // while not end of the file
     while(!inFile.eof()){
+        // it reads a line from the reading file
         getline(inFile, line);
+        // run over each character in that line
         for(char letter : line){
+            // then decrementing the character by using its ascii value
             temp = int(letter) - 1;
             letter = char(temp);
+            // write that letter in the writing file
             myFile << letter;
         }
+        // At the end of each line a new line is added in the writing file
         myFile << endl;
     }
 
@@ -201,13 +237,18 @@ void mergeFile(){
         cin >> mergedFile;
         mergedFile += ".txt";
     }
+    // open the merged file chosen by the user in the read mode
     myFileMerged.open(mergedFile, ios::in);
+    // open the original file in the append mode
     myFile.open(fileName, ios::app);
+    // check if the merged file already exists
     if(myFileMerged.is_open()){
+        // creating a loop that runs as long as there is a line to read, then write that line in the original file
         while(getline(myFileMerged, text)){
             myFile << text << endl;
         }
     }else{
+        // if it does not exist then the user is asked to enter the filename again
         cout << "Invalid File Name, please try again: " << endl;
         mergeFile();
     }
@@ -219,8 +260,11 @@ void mergeFile(){
 void countWords(){
     string word;
     int count = 0;
+    // open the file in the read mode
     myFile.open(fileName, ios::in);
+    // while it's not the end of file
     while(!myFile.eof()){
+        // we read each word in that file and increment the counter by one
         myFile >> word;
         count++;
     }
@@ -235,9 +279,11 @@ void countCharacters(){
     myFile.open(fileName, ios::in);
     while(!myFile.eof()){
         myFile >> word;
+        // we read each word in that file and then run over each character in that word to increment the counter by one
         for(char letter : word){
             count++;
         }
+        // incrementing the counter again by one by the end of each word for the space or new line character
         count++;
     }
     count--;
@@ -250,6 +296,7 @@ void countLines(){
     int count = 0;
     string text;
     myFile.open(fileName, ios::in);
+    // creating a loop that runs as long as there is a line to read, then increment the counter by one for each line
     while(getline(myFile, text)){
         count++;
     }
@@ -264,15 +311,22 @@ void searchWord() {
     int count = 0;
     cout << "Please enter the word you want to search for: " << endl;
     cin >> searchWord;
+    // Take an input from the user for the word searched for
+    // Then transform this word to lowercase
     transform(searchWord.begin(), searchWord.end(), searchWord.begin(), ::tolower);
+    // open the file in the read mode
     myFile.open(fileName, ios::in);
+    // while not at the end of the file
     while (!myFile.eof()) {
         myFile >> word;
+        // read each word from the file and transform it to lowercase for insensitive case
         transform(word.begin(), word.end(), word.begin(), ::tolower);
+        // if it matches then the counter in incremented by one
         if (word == searchWord) {
             count++;
         }
     }
+    // checking if the count increased then searched word exists in that file
     if(count > 0){
         cout << "Word was found in the file :)" << endl;
         cout << "It's been found " << count << " times. " << endl;
@@ -390,5 +444,4 @@ void save(string oldNameString) {
 
 }
 //__________________________
-
 //The program ends here!
